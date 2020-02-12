@@ -1,6 +1,6 @@
 const CONSTANTS = {
-    production: 'https://api.duda.co/api/',
-    sandbox: 'https://api-sandbox.duda.co/api/',
+    PRODUCTION: 'https://api.duda.co/api/',
+    SANDBOX: 'https://api-sandbox.duda.co/api/',
     SITE_ENDPOINT: 'sites/multiscreen/',
     TEMPLATE_ENDPOINT: 'sites/multiscreen/templates/'
 }

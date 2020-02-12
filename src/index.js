@@ -4,36 +4,36 @@ const CONSTANTS = require("./constants");
 class Duda {
     constructor(token) {
         //needs to receive 1. useranme, 2. password (or token) and 3. production environment.
-        (this.token = `Basic ${token}`), (this.endpoint = CONSTANTS.production);
-    }
+        (this.token = `Basic ${token}`), (this.endpoint = CONSTANTS.PRODUCTION);
 
-    fetchData(method, path, data) {
-        const uri = `${this.endpoint}${path}`;
-        let options = {
-            method,
-            headers: new Headers({
-                authorization: this.token,
-                "content-type": "application/json"
-            })
+        this.fetchData = (method, path, data) => {
+            const uri = `${this.endpoint}${path}`;
+            let options = {
+                method,
+                headers: new Headers({
+                    authorization: this.token,
+                    "content-type": "application/json"
+                })
+            };
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            fetch(uri, options)
+                .then(res => res.json())
+                .then(json => console.log(json));
         };
-        if (data) {
-            options.body = JSON.stringify(data);
-        }
-        fetch(uri, options)
-            .then(res => res.json())
-            .then(json => console.log(json));
-    }
 
-    get(path) {
-        this.fetchData("GET", path);
-    }
+        this.get = path => {
+            this.fetchData("GET", path);
+        };
 
-    post(path, data) {
-        this.fetchData("POST", path, data);
-    }
+        this.post = (path, data) => {
+            this.fetchData("POST", path, data);
+        };
 
-    delete(path) {
-        this.fetchData("DELETE", path);
+        this.delete = path => {
+            this.fetchData("DELETE", path);
+        };
     }
 
     //Sites
