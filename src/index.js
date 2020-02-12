@@ -1,42 +1,46 @@
-const fetch = require('isomorphic-fetch');
-const CONSTANTS = require('./constants');
+const fetch = require("isomorphic-fetch");
+const CONSTANTS = require("./constants");
 
 class Duda {
-  constructor() {
+    constructor(token) {
+        //needs to receive 1. useranme, 2. password (or token) and 3. production environment.
+        (this.token = `Basic ${token}`), 
+        (this.endpoint = CONSTANTS.production);
+    }
 
-  }
-
-  wrapperFetch() {
-    let options = {
-            method: "GET",
+    fetchData(method, path, data) {
+        const uri = `${this.endpoint}${path}`;
+        let options = {
+            method,
             headers: new Headers({
-                Authorization: 'Basic NTYxYzQ3ODE1ZjpwYXNzd29yZDEyMzQ=',
+                authorization: this.token,
                 "content-type": "application/json"
             })
         };
-    fetch('https://api.duda.co/api/sites/multiscreen/9a7d4ec5', options)
-    .then(res => res.json())
-    .then(json => console.log(json));
-  }
+        fetch(uri, options)
+            .then(res => res.json())
+            .then(json => console.log(json));
+    }
 
-  wrapperFunc() {
-    console.log(CONSTANTS.production);
-  }
+    get(path) {
+        this.fetchData("GET", path);
+    }
 
+    post(path, data) {
+        this.fetchData("POST", path, data);
+    }
+
+    delete(path) {
+        this.fetchData("DELETE", path);
+    }
+
+    //Sites
+    getSite(siteName) {
+        this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}`);
+    }
 }
 
-
-
 module.exports = Duda;
-
-
-
-
-
-
-
-
-
 
 /* Questions:
 1. Why when I do module.exports = class Duda this works, while when I do export class duda it doesn't.
