@@ -1,6 +1,6 @@
 const fetch = require("isomorphic-fetch");
 const CONSTANTS = require("./constants");
-const utils = require("./utils");
+// const utils = require("./utils");
 
 const responseHandler = response => {
     if (response.status === 204) {
@@ -19,7 +19,6 @@ const responseHandler = response => {
 
 class Duda {
     constructor(token) {
-        //needs to receive 1. useranme, 2. password (or token) and 3. production environment.
         (this.token = `Basic ${token}`), (this.endpoint = CONSTANTS.PRODUCTION);
 
         this.fetchData = (method, path, data) => {
