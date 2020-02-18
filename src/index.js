@@ -1,5 +1,6 @@
 const fetch = require("isomorphic-fetch");
 const CONSTANTS = require("./constants");
+const _ = require(`lodash/cloneDeep`)
 // const utils = require("./utils");
 
 const responseHandler = response => {
@@ -18,8 +19,12 @@ const responseHandler = response => {
 };
 
 class Duda {
-    constructor(token) {
-        (this.token = `Basic ${token}`), (this.endpoint = CONSTANTS.PRODUCTION);
+    constructor(token, endpoint) {
+        this.token = `Basic ${token}`;
+
+        if (!endpoint || endpoint.toUpperCase() === `PRODUCTION`) this.endpoint = CONSTANTS.PRODUCTION;
+        else if (endpoint.toUpperCase() === `SANDBOX`) this.endpoint = CONSTANTS.SANDBOX;
+        else this.endpoint = endpoint;
 
         this.fetchData = (method, path, data) => {
             const uri = `${this.endpoint}${path}`;
@@ -62,8 +67,18 @@ class Duda {
         return this.get(`${CONSTANTS.SITE_ENDPOINT}byexternalid/${siteName}`);
     }
 
-    createSite(templateID) {
-        return this.post(`${CONSTANTS.SITE_ENDPOINT}create`, templateID);
+    createSite(templateID, options) {
+        let data;
+        if (!options) {
+            data = {
+                "template_id": templateID
+            }
+        }
+        else {
+            data = _(options);
+            data.template_id = templateID;
+        }
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}create`, data);
     }
 
     updateSite(siteName, data) {
