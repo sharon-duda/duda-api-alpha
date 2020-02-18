@@ -196,6 +196,10 @@ class Duda {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/content`, data);
     }
 
+    updateSiteContentLibrary(siteName) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/content/publish`);
+    }
+
     uploadResource(siteName, data) {
         return this.post(
             `${CONSTANTS.SITE_ENDPOINT}resources/${siteName}/upload`,
@@ -204,35 +208,43 @@ class Duda {
     }
 
     injectContent(siteName, data) {
-        return this.post(`${CONSTANTS.SITE_ENDPOINT}inject-content/${siteName}`, data);
+        return this.post(`${CONTENT_INJECTION_ENDPOINT}${siteName}`, data);
+    }
+
+    injectContentToSinglePage(siteName, pageName, data) {
+        return this.post(`${CONTENT_INJECTION_ENDPOINT}${siteName}/${pageName}`, data);
+    }
+
+    getContentInjectionValues(siteName){
+        return this.get(`${CONTENT_INJECTION_ENDPOINT}${siteName}`);
     }
 
     //collections
 
     getCollection(siteName, collectionName) {
         return this.get(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}`
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}`
         );
     }
 
     getSiteCollections(siteName) {
-        return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}collection`);
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}/collection`);
     }
 
     createCollection(siteName, data) {
-        return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}collection`, data);
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/collection`, data);
     }
 
     updateCollectionName(siteName, currentCollectionName, newCollectionName) {
         return this.put(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${currentCollectionName}`,
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${currentCollectionName}`,
             newCollectionName
         );
     }
 
     deleteCollection(siteName, collectionName) {
         return this.get(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}`
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}`
         );
     }
 
