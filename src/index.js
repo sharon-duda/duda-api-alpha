@@ -1,7 +1,6 @@
-const fetch = require("isomorphic-fetch");
 const CONSTANTS = require("./constants");
+const fetch = require("isomorphic-fetch");
 const _ = require(`lodash/cloneDeep`)
-// const utils = require("./utils");
 
 const responseHandler = response => {
     if (response.status === 204) {
@@ -58,7 +57,10 @@ class Duda {
         };
     }
 
-    //Sites
+    //==============================================================================================
+    //===========================================SITES==============================================
+    //==============================================================================================
+
     getSite(siteName) {
         return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}`);
     }
@@ -85,6 +87,10 @@ class Duda {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}update/${siteName}`, data);
     }
 
+    deleteSite(siteName) {
+        return this.delete(`${CONSTANTS.SITE_ENDPOINT}${siteName}`);
+    }
+
     publishSite(siteName) {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}publish/${siteName}`);
     }
@@ -93,7 +99,18 @@ class Duda {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}unpublish/${siteName}`);
     }
 
-    //tempalates
+    duplicateSite(siteName, data) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}reset/${siteName}`, data)
+    }
+
+    switchTemplate(siteName, data) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}switchTemplate/${siteName}`, data)
+    }
+
+    //==============================================================================================
+    //==========================================TEMPLATES===========================================
+    //==============================================================================================
+
     getTemplate(templateID) {
         return this.get(`${CONSTANTS.TEMPLATE_ENDPOINT}${templateID}`);
     }
@@ -131,7 +148,45 @@ class Duda {
         );
     }
 
-    //content
+    deleteTemplate(templateID) {
+        return this.delete(`${CONSTANTS.TEMPLATE_ENDPOINT}${templateID}`)
+    }
+
+
+    //==============================================================================================
+    //===========================================ACCOUNT============================================
+    //==============================================================================================
+
+    getAccountDetails(accountName) {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}`)
+    }
+
+    createAccount(accountName, options) {
+        let data;
+        if (!options) {
+            data = {
+                "account_name": accountName
+            }
+        }
+        else {
+            data = _(options);
+            data.template_id = templateID;
+        }
+        return this.post(`${CONSTANTS.ACCOUNT_ENDPOINT}create`, data);
+    }
+
+    updateAccount(accountName, data) {
+        return this.post(`${CONSTANTS.ACCOUNT_ENDPOINT}update/${accountName}`, data);
+    }
+
+    deleteAccount(accountName) {
+        return this.delete(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}`)
+    }
+
+
+    //==============================================================================================
+    //===========================================CONTENT============================================
+    //==============================================================================================
 
     getSiteContentLibrary(siteName) {
         return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}/content`);
@@ -204,7 +259,9 @@ class Duda {
         );
     }
 
-    //collectinos fields
+    //==============================================================================================
+    //=====================================COLLECTION FIELDS========================================
+    //==============================================================================================
 
     addField(siteName, collectionName, data) {
         return this.post(
