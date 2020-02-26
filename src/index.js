@@ -1,21 +1,11 @@
 const CONSTANTS = require("./constants");
+const Utils = require('./Utils')
 const fetch = require("isomorphic-fetch");
 const _ = require(`lodash/cloneDeep`)
 
-const responseHandler = response => {
-    if (response.status === 204) {
-        console.log(`succefully returned with ${response.status}`);
-        return response;
-    } else if (response.status == 200) {
-        // response.json().then(json => console.log(json))
-        return response;
-    } else {
-        console.error(
-            new Error(`Status ${response.status}: ${response.statusText}`)
-        );
-        return Promise.reject(response);
-    }
-};
+
+const utils = new Utils();
+
 
 class Duda {
     constructor(token, endpoint) {
@@ -37,7 +27,7 @@ class Duda {
             if (data) {
                 options.body = JSON.stringify(data);
             }
-            return fetch(uri, options).then(responseHandler);
+            return fetch(uri, options).then(utils.responseHandler);
         };
 
         this.get = path => {
@@ -58,7 +48,7 @@ class Duda {
     }
 
     //==============================================================================================
-    //===========================================SITES==============================================
+    //===========================================SITE===============================================
     //==============================================================================================
 
     getSite(siteName) {
@@ -91,6 +81,10 @@ class Duda {
         return this.delete(`${CONSTANTS.SITE_ENDPOINT}${siteName}`);
     }
 
+    getSiteToken(siteName) {
+        return this.get(`store/${siteName}/accessData`)
+    }
+
     publishSite(siteName) {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}publish/${siteName}`);
     }
@@ -100,6 +94,10 @@ class Duda {
     }
 
     duplicateSite(siteName, data) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}duplicate/${siteName}`, data)
+    }
+
+    resetSite(siteName, data) {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}reset/${siteName}`, data)
     }
 
@@ -108,7 +106,7 @@ class Duda {
     }
 
     //==============================================================================================
-    //==========================================TEMPLATES===========================================
+    //==========================================TEMPLATE============================================
     //==============================================================================================
 
     getTemplate(templateID) {
@@ -154,6 +152,31 @@ class Duda {
 
 
     //==============================================================================================
+    //============================================PAGES=============================================
+    //==============================================================================================
+
+    getPageDetails(siteName, pageName) {
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}/pages/${pageName}`);
+    }
+
+    getSitePages(siteName) {
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}/pages`);
+    }
+
+    updatePage(siteName, pageName, data) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/pages/${pageName}/update`, data);
+    }
+
+    duplicatePage(siteName, pageName, newPageTitle) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/pages/${pageName}/duplicate?pageTitle=${newPageTitle}`);
+    }
+
+    deletePage(siteName, pageName) {
+        return this.delete(`${CONSTANTS.SITE_ENDPOINT}${siteName}/pages/${pageName}/delete`);
+    }
+
+
+    //==============================================================================================
     //===========================================ACCOUNT============================================
     //==============================================================================================
 
@@ -183,6 +206,37 @@ class Duda {
         return this.delete(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}`)
     }
 
+    //permissions
+
+    getAllPermissions() {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}permissions/multiscreen`)
+    }
+
+    getSitePermissions(accountName, siteName) {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/sites/${siteName}/permissions`)
+    }
+
+    getCustomerSites(accountName) {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}grant-access/${accountName}/sites/multiscreen`)
+    }
+
+    grantSitePermissions(accountName, siteName, data) {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/sites/${siteName}/permissions`, data)
+    }
+
+    removeSiteAccess(accountName, siteName) {
+        return this.delete(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/sites/${siteName}/permissions`)
+    }
+
+    getSSOLink(accountName, siteName, target) {
+        if (target) return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/link?site_name=${siteName}&target=${target}`)
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/link?site_name=${siteName}`)
+    }
+
+    resetPasswordLink(accountName) {
+        this.post(`${CONSTANTS.ACCOUNT_ENDPOINT}/reset-password/${accountName}`)
+    }
+
 
     //==============================================================================================
     //===========================================CONTENT============================================
@@ -200,6 +254,27 @@ class Duda {
         return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/content/publish`);
     }
 
+    
+    //multi-location
+    
+    getLocationData(siteName, locationID) {
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}/${CONSTANTS.MULTI_LOCATION_ENDPOINT}${locationID}`)
+    }
+    
+    createLocation(siteName, data) {
+        return this.post(`${CONSTANTS.SITE_ENDPOINT}${siteName}/${CONSTANTS.MULTI_LOCATION_ENDPOINT}`, data)
+    }
+    
+    updateLocation(siteName, locationID) {
+        return this.psot(`${CONSTANTS.SITE_ENDPOINT}${siteName}/${CONSTANTS.MULTI_LOCATION_ENDPOINT}${locationID}`)
+    }
+    
+    deleteLocation(siteName, locationID) {
+        return this.delete(`${CONSTANTS.SITE_ENDPOINT}${siteName}/${CONSTANTS.MULTI_LOCATION_ENDPOINT}${locationID}`)
+    }
+    
+    //content injection
+    
     uploadResource(siteName, data) {
         return this.post(
             `${CONSTANTS.SITE_ENDPOINT}resources/${siteName}/upload`,
@@ -219,7 +294,9 @@ class Duda {
         return this.get(`${CONTENT_INJECTION_ENDPOINT}${siteName}`);
     }
 
-    //collections
+    //==============================================================================================
+    //========================================COLLECTIONS===========================================
+    //==============================================================================================
 
     getCollection(siteName, collectionName) {
         return this.get(
@@ -252,48 +329,86 @@ class Duda {
 
     addRow(siteName, collectionName, data) {
         return this.post(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}/row`,
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}/row`,
             data
         );
     }
 
     updateRow(siteName, collectionName, data) {
         return this.put(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}/row`,
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}/row`,
             data
         );
     }
 
     delteRow(siteName, collectionName, data) {
         return this.delete(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}/row`,
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}/row`,
             data
         );
     }
 
-    //==============================================================================================
-    //=====================================COLLECTION FIELDS========================================
-    //==============================================================================================
+    
+    //collection fields
 
     addField(siteName, collectionName, data) {
         return this.post(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}/field`,
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}/field`,
             data
         );
     }
 
     addField(siteName, collectionName, fieldName, data) {
         return this.put(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}/field/${fieldName}`,
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}/field/${fieldName}`,
             data
         );
     }
 
     deleteField(siteName, collectionName, fieldName) {
         return this.put(
-            `${CONSTANTS.SITE_ENDPOINT}${siteName}collection/${collectionName}/field/${fieldName}`
+            `${CONSTANTS.SITE_ENDPOINT}${siteName}/collection/${collectionName}/field/${fieldName}`
         );
     }
+
+    //==============================================================================================
+    //==========================================REPORTING===========================================
+    //==============================================================================================
+
+    getRecentlyPublishedSites() {
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}published`)
+    }
+
+    getRecentlyUnpublishedSites() {
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}unpublished`)
+    }
+
+    getSitesCreated(from, to = new Date().toJSON().slice(0,10)) {
+        if (from) return this.get(`${CONSTANTS.SITE_ENDPOINT}create/from=${from}&to=${to}`)
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}create/`)
+    }
+
+    getFormSubmissions(siteName, from, to = new Date().toJSON().slice(0,10)) {
+        if (from) return this.get(`${CONSTANTS.SITE_ENDPOINT}create/from=${from}&to=${to}`)
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}get-forms/${siteName}`)
+    }
+
+    getEmailSettings(accountName, siteName) {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/sites/${siteName}/stats-email`)
+    }
+
+    subscribeCustomer(accountName, siteName, frequency) {
+        const data = {
+            frequency
+        }
+        return this.post(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/sites/${siteName}/stats-email`, data)
+    }
+
+    unsubscribeCustomer(accountName, siteName) {
+        return this.get(`${CONSTANTS.ACCOUNT_ENDPOINT}${accountName}/sites/${siteName}/stats-email`)
+    }
+
+    // getAnalyticsHistory(siteName, )
 }
 
 module.exports = Duda;

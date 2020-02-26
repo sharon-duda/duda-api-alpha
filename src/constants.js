@@ -4,7 +4,8 @@ const CONSTANTS = {
     SITE_ENDPOINT: 'sites/multiscreen/',
     TEMPLATE_ENDPOINT: 'sites/multiscreen/templates/',
     ACCOUNT_ENDPOINT: 'accounts/',
-    CONTENT_INJECTION_ENDPOINT: 'sites/multiscreen/inject-content/'
+    CONTENT_INJECTION_ENDPOINT: 'sites/multiscreen/inject-content/',
+    MULTI_LOCATION_ENDPOINT: 'content/location/'
 }
 
 module.exports = CONSTANTS;
