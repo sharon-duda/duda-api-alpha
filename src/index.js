@@ -21,7 +21,8 @@ class Duda {
                 method,
                 headers: new Headers({
                     authorization: this.token,
-                    "content-type": "application/json"
+                    "content-type": "application/json",
+                    "User-Agent": "Duda REST API"
                 })
             };
             if (data) {
