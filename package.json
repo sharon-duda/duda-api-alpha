@@ -1,10 +1,10 @@
 {
   "name": "duda-api",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "JavaScript wrapper library for Duda's REST API",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "webpack production"
   },
   "author": "Sharon R.",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "babel-loader": "^8.0.6",
+    "jest": "^25.1.0",
     "webpack": "^4.41.6",
     "webpack-cli": "^4.0.0-beta.2"
   },

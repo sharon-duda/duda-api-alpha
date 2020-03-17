@@ -1,17 +1,3 @@
-// const helpers = {
-//   responseHandler: (response) => {
-//     if(response.status === 204) {
-//       console.log(`succefully returned with ${response.status}`)
-//       return
-//     }
-//     else if (response.status == 200) {
-//       response.json().then(json => console.log(json))
-//     }
-//     else {
-//       console.error(new Error(`Status ${response.status}: ${response.statusText}`))
-//       return Promise.reject(response)
-//     }
-//   },
   
 //   deepCopy: (o) => {
 //     if ((typeof o !== "object" || o === null) && !(o instanceof Function)) return o; // fast obj/null test
@@ -66,21 +52,6 @@
 //     return n;
 //   } 
 // }
-
-// const responseHandler = response => {
-//     console.log('inside function!!!!!$#$')
-//     if(response.status === 204) {
-//       console.log(`succefully returned with ${response.status}`)
-//       return
-//     }
-//     else if (response.status == 200) {
-//       response.json().then(json => console.log(json))
-//     }
-//     else {
-//       console.error(new Error(`Status ${response.status}: ${response.statusText}`))
-//       return Promise.reject(response)
-//     }
-//   }
 
 
 

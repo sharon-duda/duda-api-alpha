@@ -385,8 +385,8 @@ class Duda {
     }
 
     getSitesCreated(from, to = new Date().toJSON().slice(0,10)) {
-        if (from) return this.get(`${CONSTANTS.SITE_ENDPOINT}create/from=${from}&to=${to}`)
-        return this.get(`${CONSTANTS.SITE_ENDPOINT}create/`)
+        if (from) return this.get(`${CONSTANTS.SITE_ENDPOINT}created/from=${from}&to=${to}`)
+        return this.get(`${CONSTANTS.SITE_ENDPOINT}created/`)
     }
 
     getFormSubmissions(siteName, from, to = new Date().toJSON().slice(0,10)) {
@@ -450,6 +450,21 @@ class Duda {
     deleteSSLCerificate(siteName) {
         return this.delete(`${CONSTANTS.SITE_ENDPOINT}${siteName}/certificate`)
     }
+
+    //==============================================================================================
+    //============================================CUSTOM============================================
+    //==============================================================================================
+
+    customCall(method, path, data = null) {
+        switch (method.toLowerCase()){
+            case "get": return this.get(path);
+            case "post": return this.post(path, data);
+            case "put": return this.put(path, data);
+            case "delete": return this.delete(path);
+            default: throw new Error('Invalid method')
+        }
+    }
+
 }
 
 module.exports = Duda;
