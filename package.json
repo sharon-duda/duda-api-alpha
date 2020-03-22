@@ -1,6 +1,6 @@
 {
   "name": "duda-api",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "JavaScript wrapper library for Duda's REST API",
   "main": "dist/index.js",
   "scripts": {

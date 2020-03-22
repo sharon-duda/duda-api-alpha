@@ -73,6 +73,12 @@ class Utils {
             return Promise.reject(response);
         }
     };
+
+    tokenizer(username, password) {
+        let data = `${username}:${password}`
+        let base64data = new Buffer.from(data).toString('base64');
+        return `Basic ${base64data}`
+    }
 }
 
 module.exports = Utils;

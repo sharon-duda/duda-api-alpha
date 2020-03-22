@@ -8,8 +8,8 @@ const utils = new Utils();
 
 
 class Duda {
-    constructor(token, endpoint) {
-        this.token = `Basic ${token}`;
+    constructor(userName, password, endpoint) {
+        this.token = utils.tokenizer(userName, password);
 
         if (!endpoint || endpoint.toUpperCase() === `PRODUCTION`) this.endpoint = CONSTANTS.PRODUCTION;
         else if (endpoint.toUpperCase() === `SANDBOX`) this.endpoint = CONSTANTS.SANDBOX;
