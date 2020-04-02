@@ -13,6 +13,7 @@ class Duda {
 
         if (!endpoint || endpoint.toUpperCase() === `PRODUCTION`) this.endpoint = CONSTANTS.PRODUCTION;
         else if (endpoint.toUpperCase() === `SANDBOX`) this.endpoint = CONSTANTS.SANDBOX;
+        else if (endpoint.toUpperCase() === 'EU') this.endpoint = CONSTANTS.EU;
         else this.endpoint = endpoint;
 
         this.fetchData = (method, path, data) => {
@@ -28,6 +29,7 @@ class Duda {
             if (data) {
                 options.body = JSON.stringify(data);
             }
+            console.log(uri)
             return fetch(uri, options).then(utils.responseHandler);
         };
 
@@ -53,7 +55,8 @@ class Duda {
     //==============================================================================================
 
     getSite(siteName) {
-        return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}`);
+        return fetcher.get(siteName)
+        // return this.get(`${CONSTANTS.SITE_ENDPOINT}${siteName}`);
     }
 
     getSiteByExtId(siteName) {
@@ -284,15 +287,15 @@ class Duda {
     }
 
     injectContent(siteName, data) {
-        return this.post(`${CONTENT_INJECTION_ENDPOINT}${siteName}`, data);
+        return this.post(`${CONSTANTS.CONTENT_INJECTION_ENDPOINT}${siteName}`, data);
     }
 
     injectContentToSinglePage(siteName, pageName, data) {
-        return this.post(`${CONTENT_INJECTION_ENDPOINT}${siteName}/${pageName}`, data);
+        return this.post(`${CONSTANTS.CONTENT_INJECTION_ENDPOINT}${siteName}/${pageName}`, data);
     }
 
     getContentInjectionValues(siteName){
-        return this.get(`${CONTENT_INJECTION_ENDPOINT}${siteName}`);
+        return this.get(`${CONSTANTS.CONTENT_INJECTION_ENDPOINT}${siteName}`);
     }
 
     //==============================================================================================
